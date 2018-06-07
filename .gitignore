@@ -1,1 +1,3 @@
+*.pyc
 __*.py
+sheet.py

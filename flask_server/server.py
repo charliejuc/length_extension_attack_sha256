@@ -1,11 +1,27 @@
 import json, base64
 from flask import Flask, request
 from sys import stderr
-from hashlib import sha256
+from hashlib import sha256, sha512
 
 def sha256_hex(message):
 	return sha256(message)\
 			.hexdigest()
+
+def dbl_sha256_hex(message):
+	return sha256_hex(
+		sha256(message)
+			.digest()
+	)
+
+def sha512_hex(message):
+	return sha512(message)\
+			.hexdigest()
+
+
+def hmac_sha512_hex(key, message):
+	return sha512_hex(
+			key + sha512(key + message).digest()
+		)
 
 app = Flask(__name__)
 
@@ -27,6 +43,7 @@ def get_user_data():
 	message = base64.b64decode(data_to_show)
 	full_message = hash_pass.encode() + message
 
+	# valid_signature = hmac_sha512_hex(hash_pass.encode(), message)
 	valid_signature = sha256_hex(full_message)
 
 	print('Valid Signature: ', valid_signature)
